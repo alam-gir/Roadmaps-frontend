@@ -4,6 +4,7 @@ import {
   getCommentRepliesByCommentId,
   getCommentsByRoadmapId,
   replyToCommentByRoadmapIdAndCommentId,
+  upvoteTocommentBycommentId,
 } from "~/services/commentService";
 
 export const useCommentsOfRoadmap = (roadmapId: string) => {
@@ -35,3 +36,10 @@ export const useCommentReplyMutation = () => {
     mutationFn: replyToCommentByRoadmapIdAndCommentId,
   });
 };
+
+export const useCommentUpvoteMutation = () => {
+    return useMutation({
+        mutationKey: ["roadmap-comments", "comment-replies"],
+        mutationFn: upvoteTocommentBycommentId
+    })
+}

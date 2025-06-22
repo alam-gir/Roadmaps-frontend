@@ -89,3 +89,16 @@ export const replyToCommentByRoadmapIdAndCommentId = async ({
     throw ThrowAxiosError(error);
   }
 };
+
+export const upvoteTocommentBycommentId = async (
+  commentId: string
+): Promise<TApiResponse<null>> => {
+  try {
+    const response = await axiosInstance.post(
+      "/roadmaps/comments/" + commentId + "/upvotes"
+    );
+    return response.data;
+  } catch (error) {
+    throw ThrowAxiosError(error);
+  }
+};

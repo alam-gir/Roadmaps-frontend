@@ -1,6 +1,6 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query"
+import { useMutation, useQuery, type UseQueryOptions } from "@tanstack/react-query"
 import type { ApiException } from "~/lib/axios"
-import { getRoadmapById, getRoadmaps } from "~/services/roadmapService"
+import { getRoadmapById, getRoadmaps, upvoteToRoadmapByRoadmapId } from "~/services/roadmapService"
 import type { TApiResponse, TPaginatedApiResponse } from "~/types/apiResponseTypes"
 import type { TRoadmap, TRoadmapParams } from "~/types/roadmapTypes"
 
@@ -24,5 +24,12 @@ export const userRoadmap = (
         queryFn: () => getRoadmapById(id),
         enabled: !!id,
         ...options
+    })
+}
+
+export const useRoamdapUpvoteMutation = () => {
+    return useMutation({
+        mutationKey: ["roadmaps", "comment-replies"],
+        mutationFn: upvoteToRoadmapByRoadmapId
     })
 }
