@@ -3,6 +3,7 @@ import type { TApiResponse } from "~/types/apiResponseTypes";
 import type {
   TLoginCredential,
   TSignupCredential,
+  TVerifyEmailParam,
 } from "~/types/authenticationTypes";
 
 export const login = async (
@@ -40,6 +41,32 @@ export const signup = async (
 export const logout = async (): Promise<TApiResponse<null>> => {
   try {
     const response = await axiosInstance.get("/auth/logout");
+    return response.data;
+  } catch (error) {
+    throw ThrowAxiosError(error);
+  }
+};
+
+export const verifyEmail = async (
+  params: TVerifyEmailParam
+): Promise<TApiResponse<null>> => {
+  try {
+    const response = await axiosInstance.get("/auth/verify-email", {
+      params,
+    });
+    return response.data;
+  } catch (error) {
+    throw ThrowAxiosError(error);
+  }
+};
+
+export const getEmailVerificationLink = async (): Promise<
+  TApiResponse<null>
+> => {
+  try {
+    const response = await axiosInstance.get(
+      "/auth/get-email-verification-link"
+    );
     return response.data;
   } catch (error) {
     throw ThrowAxiosError(error);

@@ -1,3 +1,7 @@
+export type TCommentParam = {
+    page?: number;
+    size?: number;
+}
 
 export type TComment = {
     id: string;

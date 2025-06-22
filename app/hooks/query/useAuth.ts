@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { login, logout, signup } from "~/services/authService";
+import { getEmailVerificationLink, login, logout, signup, verifyEmail } from "~/services/authService";
 import type { TLoginCredential, TSignupCredential } from "~/types/authenticationTypes";
 
 export const useLoginMutation = () => {
@@ -20,5 +20,19 @@ export const useLogoutMutation = () => {
     return useMutation({
         mutationKey: ['logout'],
         mutationFn: logout
+    })
+}
+
+export const useVerifyEmailMutation = () => {
+    return useMutation({
+        mutationKey: ['verify-email'],
+        mutationFn: verifyEmail
+    })
+}
+
+export const getEmailVerificationLinkMutation = () => {
+    return useMutation({
+        mutationKey: ['get-email-verification'],
+        mutationFn: getEmailVerificationLink
     })
 }
