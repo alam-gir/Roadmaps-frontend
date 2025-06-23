@@ -11,6 +11,7 @@ export type TComment = {
     image?: string;
     totalUpvote: number;
     totalReplies: number;
+    hasVote: boolean;
     createdAt: Date;
 }
 

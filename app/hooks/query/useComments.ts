@@ -65,6 +65,33 @@ export const useCommentMutation = () => {
 export const useCommentReplyMutation = () => {
   return useMutation({
     mutationFn: replyToCommentByRoadmapIdAndCommentId,
+    onMutate: async ({ commentId, roadmapId }) => {
+      await queryClient.cancelQueries({
+        queryKey: ["replies", { commentId }],
+      });
+
+      const oldRoadmaps = updateRoamampsInAllCache(
+        roadmapId,
+        queryClient,
+        roadmapAddCommentUpdateFn
+      );
+
+      return { oldRoadmaps, roadmapId, commentId };
+    },
+
+    onError: (error, {}, context) => {
+      if (context?.oldRoadmaps.oldDataMap) {
+        for (const [key, value] of context.oldRoadmaps.oldDataMap.entries()) {
+          queryClient.setQueryData(key, value);
+        }
+      }
+    },
+
+    onSettled: (res, error, {}, context) => {
+      queryClient.invalidateQueries({
+        queryKey: ["replies", { roadmapId: context?.commentId }],
+      });
+    },
   });
 };
 
