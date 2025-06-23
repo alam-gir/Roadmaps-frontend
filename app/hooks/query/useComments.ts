@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { queryClient } from "~/lib/queryClient";
 import {
   commentToRoadmapByRoadmapId,
   getCommentRepliesByCommentId,
@@ -6,10 +7,14 @@ import {
   replyToCommentByRoadmapIdAndCommentId,
   upvoteTocommentBycommentId,
 } from "~/services/commentService";
+import {
+  roadmapAddCommentUpdateFn,
+  updateRoamampsInAllCache,
+} from "./useRoadmaps";
 
 export const useCommentsOfRoadmap = (roadmapId: string) => {
   return useQuery({
-    queryKey: ["roadmap-comments", "roadmap-" + roadmapId + "-comments"],
+    queryKey: ["comments", { roadmapId }],
     queryFn: () => getCommentsByRoadmapId(roadmapId),
     enabled: !!roadmapId,
   });
@@ -17,7 +22,7 @@ export const useCommentsOfRoadmap = (roadmapId: string) => {
 
 export const useRepliesOfComments = (commentId: string) => {
   return useQuery({
-    queryKey: ["comment-replies", "comment-" + commentId + "-replies"],
+    queryKey: ["replies", { commentId }],
     queryFn: () => getCommentRepliesByCommentId(commentId),
     enabled: !!commentId,
   });
@@ -25,21 +30,46 @@ export const useRepliesOfComments = (commentId: string) => {
 
 export const useCommentMutation = () => {
   return useMutation({
-    mutationKey: ["roadmap-comments"],
     mutationFn: commentToRoadmapByRoadmapId,
+
+    onMutate: async ({ roadmapId }) => {
+      await queryClient.cancelQueries({
+        queryKey: ["comments", { roadmapId }],
+      });
+
+      const oldRoadmaps = updateRoamampsInAllCache(
+        roadmapId,
+        queryClient,
+        roadmapAddCommentUpdateFn
+      );
+
+      return { oldRoadmaps, roadmapId };
+    },
+
+    onError: (error, {}, context) => {
+      if (context?.oldRoadmaps.oldDataMap) {
+        for (const [key, value] of context.oldRoadmaps.oldDataMap.entries()) {
+          queryClient.setQueryData(key, value);
+        }
+      }
+    },
+
+    onSettled: (res, error, {}, context) => {
+      queryClient.invalidateQueries({
+        queryKey: ["comments", { roadmapId: context?.roadmapId }],
+      });
+    },
   });
 };
 
 export const useCommentReplyMutation = () => {
   return useMutation({
-    mutationKey: ["comment-replies"],
     mutationFn: replyToCommentByRoadmapIdAndCommentId,
   });
 };
 
 export const useCommentUpvoteMutation = () => {
-    return useMutation({
-        mutationKey: ["roadmap-comments", "comment-replies"],
-        mutationFn: upvoteTocommentBycommentId
-    })
-}
+  return useMutation({
+    mutationFn: upvoteTocommentBycommentId,
+  });
+};

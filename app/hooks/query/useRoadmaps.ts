@@ -43,8 +43,10 @@ export const useRoadmap = (
 export const useRoamdapUpvoteMutation = () => {
   return useMutation({
     mutationFn: upvoteToRoadmapByRoadmapId,
-    onMutate: async (roadmapId) =>
-      updateRoamampsInAllCache(roadmapId, queryClient, roadmapUpvoteUpdateFn),
+    onMutate: async (roadmapId) => {
+        queryClient.cancelQueries({queryKey: ['roadmaps', {roadmapId}]})
+     return updateRoamampsInAllCache(roadmapId, queryClient, roadmapUpvoteUpdateFn);
+    },
     onError: (error, roadmapId, context) => {
       if (!context?.oldDataMap) return;
 
@@ -52,6 +54,9 @@ export const useRoamdapUpvoteMutation = () => {
         queryClient.setQueryData(key, value);
       }
     },
+    onSettled: (res, error, {}, context) => {
+        queryClient.invalidateQueries({queryKey: ['roadmaps']})
+    }
   });
 };
 
@@ -114,14 +119,14 @@ const roadmapUpvoteUpdateFn = (item: TRoadmap) => {
   }
 };
 
-const roadmapAddCommentUpdateFn = (item: TRoadmap) => {
+export const roadmapAddCommentUpdateFn = (item: TRoadmap) => {
   return {
     ...item,
     totalComment: item.totalComment + 1,
   } satisfies TRoadmap;
 };
 
-const roadmapRemoveCommentUpdateFn = (item: TRoadmap) => {
+export const roadmapRemoveCommentUpdateFn = (item: TRoadmap) => {
   return {
     ...item,
     totalComment: item.totalComment - 1,
