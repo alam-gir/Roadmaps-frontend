@@ -15,5 +15,6 @@ export type TRoadmap = {
     status: string;
     totalUpvote: number;
     totalComment: number;
+    hasVote: boolean
     createdAt: Date;
 }

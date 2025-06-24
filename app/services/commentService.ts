@@ -90,9 +90,12 @@ export const replyToCommentByRoadmapIdAndCommentId = async ({
   }
 };
 
-export const upvoteTocommentBycommentId = async (
-  commentId: string
-): Promise<TApiResponse<null>> => {
+export const upvoteTocommentBycommentId = async ({
+  commentId,
+}: {
+  commentId: string;
+  roadmapId: string; //  this is for validation in the upvote mutation.
+}): Promise<TApiResponse<null>> => {
   try {
     const response = await axiosInstance.post(
       "/roadmaps/comments/" + commentId + "/upvotes"
