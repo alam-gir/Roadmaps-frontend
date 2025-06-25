@@ -1,37 +1,46 @@
-import { useForm } from "react-hook-form";
-import { useLoginMutation } from "~/hooks/query/useAuth";
-import { useFormErrors } from "~/hooks/useFormErrors";
-import { loginSchema, type TLoginFormData } from "~/lib/zod-schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "~/components/input-field";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useSignupMutation } from "~/hooks/query/useAuth";
+import { useFormErrors } from "~/hooks/useFormErrors";
+import { signupSchema, type TSignupFormData } from "~/lib/zod-schema/auth";
+import { Input } from "../input-field";
 
-function LoginForm() {
+function SignupForm() {
   const navigate = useNavigate();
 
   const { handleApiFormError, apiGeneralError, clearApiErrors, getFieldError } =
     useFormErrors();
 
-  const { isPending, mutate: login } = useLoginMutation({
+  const { isPending, mutate: signup } = useSignupMutation({
     onError: (error) => handleApiFormError(error),
-    onSuccess: () => navigate("/", { replace: true }),
+    onSuccess: () => navigate("/login", { replace: true }),
   });
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<TLoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<TSignupFormData>({
+    resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = async (data: TLoginFormData) => {
+  const onSubmit = async (data: TSignupFormData) => {
     clearApiErrors();
-    login(data);
+    signup(data);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
+        <Input
+          label="Name"
+          {...register("name")}
+          type="text"
+          placeholder="Enter your Name here."
+          error={getFieldError("name", errors)}
+          disabled={isPending}
+        />
+
         <Input
           label="Email"
           {...register("email")}
@@ -61,10 +70,10 @@ function LoginForm() {
         disabled={isPending || isSubmitting}
         className="w-full flex justify-center py-2 px-4 border border-gray-100 rounded-md shadow-sm text-sm font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isPending || isSubmitting ? "Login..." : "Login"}
+        {isPending || isSubmitting ? "Signup..." : "Signup"}
       </button>
     </form>
   );
 }
 
-export default LoginForm;
+export default SignupForm

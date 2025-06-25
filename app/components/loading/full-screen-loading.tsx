@@ -1,8 +1,9 @@
-import React from 'react'
 
 function FullScreenLoading() {
   return (
-    <div>FullScreenLoading...</div>
+    <div className="h-screen w-screen overflow-hidden animate-pulse bg-gray-100 flex items-center justify-center">
+      Welcome to Roadmap
+    </div>
   )
 }
 

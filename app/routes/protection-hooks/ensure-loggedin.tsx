@@ -5,7 +5,7 @@ import { useUserProfile } from "~/hooks/query/useUser";
 function EnsureLoggedin() {
   const { isLoading, data, isError } = useUserProfile();
 
-  if (isLoading) <FullScreenLoading />;
+  if (isLoading) return <FullScreenLoading />;
 
   // if not logged in redirect to login.
   if (isError || !data || !data.success)

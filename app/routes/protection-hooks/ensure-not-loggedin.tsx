@@ -5,11 +5,10 @@ import { useUserProfile } from "~/hooks/query/useUser";
 function EnsureNotLoggedin() {
   const { isLoading, data } = useUserProfile();
 
-  if (isLoading) <FullScreenLoading />;
+  if (isLoading) return <FullScreenLoading />;
 
   // if not logged in redirect to login.
-  if (data?.success)
-    return <Navigate to={"/"} replace />;
+  if (data?.success) return <Navigate to={"/"} replace />;
 
   // if logged in but not verified then redirect to verify-email
   if (data && data.success && !data.data.isEmailVerified)
@@ -18,4 +17,4 @@ function EnsureNotLoggedin() {
   return <Outlet />;
 }
 
-export default EnsureNotLoggedin
+export default EnsureNotLoggedin;

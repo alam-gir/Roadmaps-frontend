@@ -1,13 +1,10 @@
 import axiosInstance, { ThrowAxiosError } from "~/lib/axios";
+import type { TLoginFormData, TSignupFormData } from "~/lib/zod-schema/auth";
 import type { TApiResponse } from "~/types/apiResponseTypes";
-import type {
-  TLoginCredential,
-  TSignupCredential,
-  TVerifyEmailParam,
-} from "~/types/authenticationTypes";
+import type { TVerifyEmailParam } from "~/types/authenticationTypes";
 
 export const login = async (
-  loginCredential: TLoginCredential
+  loginCredential: TLoginFormData
 ): Promise<TApiResponse<null>> => {
   try {
     const formData = new FormData();
@@ -23,7 +20,7 @@ export const login = async (
 };
 
 export const signup = async (
-  signupCredential: TSignupCredential
+  signupCredential: TSignupFormData
 ): Promise<TApiResponse<null>> => {
   try {
     const formData = new FormData();
@@ -31,7 +28,7 @@ export const signup = async (
     formData.append("email", signupCredential.email);
     formData.append("password", signupCredential.password);
 
-    const response = await axiosInstance.post("/auth/signup", formData);
+    const response = await axiosInstance.post("/auth/sign-up", formData);
     return response.data;
   } catch (error) {
     throw ThrowAxiosError(error);
